@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { stat } from 'fs';
@@ -67,20 +67,62 @@ export class UsersController {
                 data: singleUser
             }
         } catch (error) {
-            
+            if(error.code === 'P2002'){
+                return {
+                    statusCode: HttpStatus.CONFLICT,
+                    message: "User with this email already exists"
+                }
+            }
+            return {
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server erro"
+            }
         }
     }
 
     @Put(':id')
-    async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
+    async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
        try {
-         return await this.userService.updateUser(Number(id), dto)
+         const updatedUser =  await this.userService.updateUser(Number(id), dto)
+         return {
+            statusCode: HttpStatus.OK,
+            message: "User updated succesfully!",
+            data: updatedUser
+         }
        } catch (error) {
-           throw new HttpException(
-        error.message || 'Failed to update user',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+           if(error.code === 'P2002'){
+                return {
+                    statusCode: HttpStatus.CONFLICT,
+                    message: "User with this email already exists"
+                }
+            }
+            return {
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server erro"
+            }
     }
        }
-    
+
+    @Delete(':id')
+    async deleteUser(@Param('id') id: string){
+        try {
+            const deletedUser = await this.userService.deleteUser(Number(id));
+            return {
+                statusCode: HttpStatus.OK,
+                message: "User deleted succesfully!",
+                data: deletedUser
+            }
+        } catch (error) {
+            if(error.code === 'P2002'){
+                return {
+                    statusCode: HttpStatus.CONFLICT,
+                    message: "User with this email already exists"
+                }
+            }
+            return {
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error"
+            }
+        }
+    }
 }

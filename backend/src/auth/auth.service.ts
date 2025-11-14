@@ -44,12 +44,12 @@
         try {
         const user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
-            throw new UnauthorizedException('Invalid email or password.');
+            throw new UnauthorizedException('User with this email doesnot exist!');
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            throw new UnauthorizedException('Password does not match.');
+            throw new UnauthorizedException('Password does not match!');
         }
 
         const payload = { subject: user.id, email: user.email, role: user.role };
