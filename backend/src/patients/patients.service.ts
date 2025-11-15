@@ -8,8 +8,6 @@ import { UpdatePatientDto } from './dto/update-patient.dto';
 export class PatientsService {
   constructor(private prisma: PrismaService) { }
 
-
-
   async createPatient(dto: CreatePatientDto): Promise<PatientResponseDto> {
     try {
       const existingPatient = await this.prisma.patient.findUnique({
@@ -28,7 +26,7 @@ export class PatientsService {
 
       return this.toPatientResponse(newPatient);
     } catch (error) {
-      throw error; // ❗ important
+      throw new InternalServerErrorException('Failed to create patient.');
     }
   }
 
