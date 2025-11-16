@@ -8,10 +8,15 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersService } from './users/users.service';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guards';
 
 @Module({
   imports: [PatientsModule, UsersModule, AuthModule, AppointmentsModule, DoctorsModule, DatabaseModule],
   controllers: [AppController],
-  providers: [AppService, UsersService],
+  providers: [AppService, UsersService,  {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },],
 })
 export class AppModule {}

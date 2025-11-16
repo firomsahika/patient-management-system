@@ -1,4 +1,6 @@
-import { IsNotEmpty, IsString, IsOptional, IsEmail, MinLength } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEmail, MinLength, IsEnum } from 'class-validator';
+import {Role} from "@prisma/client"
+
 
 export class CreateUserDto {
     @IsNotEmpty()
@@ -14,7 +16,7 @@ export class CreateUserDto {
     password: string;
 
     @IsOptional()
-    @IsString()
-    role? : string;
+    @IsEnum(Role, { message: 'Role must be one of the following: admin, doctor, nurse, patient.' })
+    role?:Role;
 
 }
