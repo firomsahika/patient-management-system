@@ -1,11 +1,11 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class UpdatePatientDto {
 
   @IsString()
   name?: string;
 
-  @IsString()
+  @IsNumber()
   age?: number;
 
   @IsString()
