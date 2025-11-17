@@ -58,6 +58,8 @@
             expiresIn: '1h',
         });
 
+        console.log("User", payload)
+
         return { accessToken: token, user: this.toResponse(user) };
         } catch (error) {
         if (error instanceof UnauthorizedException) throw error;

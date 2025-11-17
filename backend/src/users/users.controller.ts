@@ -1,15 +1,22 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { stat } from 'fs';
 import { single } from 'rxjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
+import { RolesGuard } from 'src/auth/guards/roles.guards';
 
 @Controller('users')
 export class UsersController {
     constructor(private userService:UsersService){}
 
+   
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.admin)
     @Post('create')
     async createUser(@Body() dto:CreateUserDto){
         try {
