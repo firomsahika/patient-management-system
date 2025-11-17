@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { stat } from 'fs';
@@ -12,13 +12,13 @@ import { RolesGuard } from 'src/auth/guards/roles.guards';
 
 @Controller('users')
 export class UsersController {
-    constructor(private userService:UsersService){}
+    constructor(private userService: UsersService) { }
 
-   
+
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.admin)
     @Post('create')
-    async createUser(@Body() dto:CreateUserDto){
+    async createUser(@Body() dto: CreateUserDto) {
         try {
             const user = await this.userService.createUser(dto)
             return {
@@ -27,7 +27,7 @@ export class UsersController {
                 data: user
             }
         } catch (error) {
-            if(error.code === 'P2002'){
+            if (error.code === 'P2002') {
                 return {
                     statusCode: HttpStatus.CONFLICT,
                     message: "User with this email already exists"
@@ -35,13 +35,20 @@ export class UsersController {
             }
             return {
                 statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server erro"
+                message: "Internal server error"
             }
         }
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get('me')              // GET /users/me
+    testMe(@Req() req: any) {
+        console.log('req.user in /users/me ->', req.user);
+        return { user: req.user };
+    }
+
     @Get('all')
-    async getAllUsers(){
+    async getAllUsers() {
         try {
             const users = await this.userService.getAllUsers();
             return {
@@ -50,7 +57,7 @@ export class UsersController {
                 data: users
             }
         } catch (error) {
-            if(error.code === 'P2002'){
+            if (error.code === 'P2002') {
                 return {
                     statusCode: HttpStatus.CONFLICT,
                     message: "User with this email already exists"
@@ -60,12 +67,12 @@ export class UsersController {
                 statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
                 message: "Internal server erro"
             }
-            
+
         }
     }
 
     @Get(':id')
-    async getUserById(@Param('id') id: string){
+    async getUserById(@Param('id') id: string) {
         try {
             const singleUser = await this.userService.getUserById(Number(id));
             return {
@@ -74,7 +81,7 @@ export class UsersController {
                 data: singleUser
             }
         } catch (error) {
-            if(error.code === 'P2002'){
+            if (error.code === 'P2002') {
                 return {
                     statusCode: HttpStatus.CONFLICT,
                     message: "User with this email already exists"
@@ -89,15 +96,15 @@ export class UsersController {
 
     @Put(':id')
     async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-       try {
-         const updatedUser =  await this.userService.updateUser(Number(id), dto)
-         return {
-            statusCode: HttpStatus.OK,
-            message: "User updated succesfully!",
-            data: updatedUser
-         }
-       } catch (error) {
-           if(error.code === 'P2002'){
+        try {
+            const updatedUser = await this.userService.updateUser(Number(id), dto)
+            return {
+                statusCode: HttpStatus.OK,
+                message: "User updated succesfully!",
+                data: updatedUser
+            }
+        } catch (error) {
+            if (error.code === 'P2002') {
                 return {
                     statusCode: HttpStatus.CONFLICT,
                     message: "User with this email already exists"
@@ -107,11 +114,11 @@ export class UsersController {
                 statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
                 message: "Internal server erro"
             }
+        }
     }
-       }
 
     @Delete(':id')
-    async deleteUser(@Param('id') id: string){
+    async deleteUser(@Param('id') id: string) {
         try {
             const deletedUser = await this.userService.deleteUser(Number(id));
             return {
@@ -120,7 +127,7 @@ export class UsersController {
                 data: deletedUser
             }
         } catch (error) {
-            if(error.code === 'P2002'){
+            if (error.code === 'P2002') {
                 return {
                     statusCode: HttpStatus.CONFLICT,
                     message: "User with this email already exists"

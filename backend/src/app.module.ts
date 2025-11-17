@@ -14,9 +14,11 @@ import { RolesGuard } from './auth/guards/roles.guards';
 @Module({
   imports: [PatientsModule, UsersModule, AuthModule, AppointmentsModule, DoctorsModule, DatabaseModule],
   controllers: [AppController],
-  providers: [AppService, UsersService,  {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },],
+  providers: [AppService, UsersService, 
+    //  {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}

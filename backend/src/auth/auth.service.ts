@@ -52,7 +52,11 @@
             throw new UnauthorizedException('Password does not match!');
         }
 
-        const payload = { subject: user.id, email: user.email, role: user.role };
+        const payload = { 
+            sub: user.id, 
+            email: user.email, 
+            role: user.role 
+        };
         const token = this.jwtService.sign(payload, {
             secret: process.env.JWT_SECRET,
             expiresIn: '1h',
